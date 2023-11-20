@@ -1,11 +1,14 @@
 const mongoose =require('mongoose');
 
-const orderSchema = mongoose.Schema({
-    name:String,
-    image:String,
-    countInStock : {
-        type:Number,
-        required:true
-    }
+const orderItemSchema = mongoose.Schema({
+  quantity : {
+    type : Number,
+    required : true
+  },
+  product :{
+    type: mongoose.Schema.Types.ObjectId,
+    ref : 'Product'
+  }
+    
 })
-exports.Order = mongoose.model('Order',orderSchema)
+exports.OrderItem = mongoose.model('OrderItem',orderItemSchema)

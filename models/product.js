@@ -4,11 +4,11 @@ const productSchema = mongoose.Schema({
     name : {type:String,
            required: true 
    },
-   discription : {
+   description : {
       type:String,
       required: true                
    },
-   richDiscirption : {
+   richDescirption : {
       type:String,
       default : ''
    },
@@ -48,12 +48,20 @@ const productSchema = mongoose.Schema({
     },
     isFeatured : {
       type :Boolean,
-      default : false,
+      default : true,
     },
       dateCreated : {
          type : Date,
          default :Date.now
       }
+ })
+
+ productSchema.virtual('id').get(function () {
+   return this._id.toHexString();
+ })
+
+ productSchema.set('toJSON',{
+   virtuals: true,
  })
 
  exports.Product = mongoose.model('Product',productSchema);
