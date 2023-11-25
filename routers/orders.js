@@ -1,5 +1,5 @@
 const {Order} = require ('../models/order');
-const {OrderItem} = require('../models/order-item');
+const {OrderItem} = require ('../models/order-item')
 const express = require('express');
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.get(`/`,async (req,res)=>{
 
 router.post('/', async (req,res)=>{
      
-    const orderItemsIds = req.body.orderItems.map( async orderItem =>{
+    const orderItemsIds = Promise.all(req.body.orderItems.map( async orderItem =>{
         let newOrderItem = new OrderItem({
              quantity : orderItem.quantity,
              product : orderItem.product
@@ -23,10 +23,13 @@ router.post('/', async (req,res)=>{
         newOrderItem = await newOrderItem.save()
 
         return newOrderItem._id;
-    })
+    }))
+    const orderItemsIdResolved = await orderItemsIds
+   
+
         let order = new Order ({
-        orderItems : orderItemsIds,
-        shippingAddress1 : req.body.shippingAddress,
+        orderItems : orderItemsIdResolved,
+        shippingAddress1 : req.body.shippingAddress1,
         shippingAddress2 : req.body.shippingAddress2,
         city : req.body.city,
         zip : req.body.zip,
@@ -36,12 +39,12 @@ router.post('/', async (req,res)=>{
         totalPrice : req.body.totalPrice,
         user : req.body.user,
     })
-    order = await order.save();
-    
+     order = await order.save(); 
+   
     if(!order){
         return res.status(400).send('order cannot be created')
     }
-    console.log(order);
+    res.send(order);
 
 })
 module.exports= router;
